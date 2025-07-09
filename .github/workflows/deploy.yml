@@ -25,6 +25,15 @@ jobs:
           source: "back/kafka/docker-compose.yml"
           target: ${{ env.REMOTE_STACK_DIR }}
 
+      - name: Ensure remote dir
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p ~/stacks/kafka
+
       - name: Launch / update Kafka stack
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -34,15 +43,14 @@ jobs:
           timeout: "10m"
           script: |
             set -e
-            mkdir -p $REMOTE_STACK_DIR
-            cd $REMOTE_STACK_DIR
+            cd ~/stacks/kafka
 
             docker container prune -f || true
             docker image prune -af || true
             docker volume prune -f || true
 
-            docker compose pull
-            docker compose up -d
+            # Pull and recreate using available compose command
+            (docker compose pull || docker-compose pull)
+            (docker compose up -d || docker-compose up -d)
 
-            echo "Kafka stack status:"
-            docker compose ps
+            (docker compose ps || docker-compose ps)
