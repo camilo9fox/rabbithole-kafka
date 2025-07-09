@@ -34,6 +34,7 @@ jobs:
           source: "back/kafka/docker-compose.yml"
           # scp-action can't expand ~, use absolute path
           target: "${{ env.REMOTE_STACK_DIR }}"
+          tar_disable: true
 
       - name: Launch / update Kafka stack
         uses: appleboy/ssh-action@v1.0.3
