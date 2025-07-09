@@ -49,13 +49,7 @@ jobs:
             docker image prune -af || true
             docker volume prune -f || true
 
-            # Pull and recreate using available compose command
-            if command -v docker-compose >/dev/null 2>&1; then
-              docker-compose pull
-              docker-compose up -d
-              docker-compose ps
-            else
-              docker compose pull
-              docker compose up -d
-              docker compose ps
-            fi
+            # Pull and recreate using docker-compose (installed on EC2)
+            docker-compose pull
+            docker-compose up -d
+            docker-compose ps
