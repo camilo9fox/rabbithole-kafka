@@ -1,0 +1,49 @@
+name: Deploy Kafka to EC2
+
+on:
+  push:
+    paths:
+      - "back/kafka/**"
+  workflow_dispatch:
+
+env:
+  REMOTE_STACK_DIR: ~/stacks/kafka
+
+jobs:
+  deploy-kafka:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "back/kafka/docker-compose.yml"
+          target: ${{ env.REMOTE_STACK_DIR }}
+
+      - name: Launch / update Kafka stack
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: "10m"
+          script: |
+            set -e
+            mkdir -p $REMOTE_STACK_DIR
+            cd $REMOTE_STACK_DIR
+
+            docker container prune -f || true
+            docker image prune -af || true
+            docker volume prune -f || true
+
+            docker compose pull
+            docker compose up -d
+
+            echo "Kafka stack status:"
+            docker compose ps
