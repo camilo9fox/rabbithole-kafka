@@ -50,7 +50,12 @@ jobs:
             docker volume prune -f || true
 
             # Pull and recreate using available compose command
-            (docker compose pull || docker-compose pull)
-            (docker compose up -d || docker-compose up -d)
-
-            (docker compose ps || docker-compose ps)
+            if command -v docker-compose >/dev/null 2>&1; then
+              docker-compose pull
+              docker-compose up -d
+              docker-compose ps
+            else
+              docker compose pull
+              docker compose up -d
+              docker compose ps
+            fi
