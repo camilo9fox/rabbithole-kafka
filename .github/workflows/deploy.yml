@@ -31,10 +31,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "back/kafka/docker-compose.yml"
-          # scp-action can't expand ~, use absolute path
+          source: "docker-compose.yml"
           target: "${{ env.REMOTE_STACK_DIR }}"
-          tar_disable: true
 
       - name: Launch / update Kafka stack
         uses: appleboy/ssh-action@v1.0.3
