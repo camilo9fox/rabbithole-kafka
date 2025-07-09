@@ -2,8 +2,7 @@ name: Deploy Kafka to EC2
 
 on:
   push:
-    paths:
-      - "back/kafka/**"
+    branches: [master]
   workflow_dispatch:
 
 env:
