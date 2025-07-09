@@ -16,15 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.yml to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "back/kafka/docker-compose.yml"
-          target: ${{ env.REMOTE_STACK_DIR }}
-
       - name: Ensure remote dir
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -33,6 +24,15 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             mkdir -p ~/stacks/kafka
+
+      - name: Copy docker-compose.yml to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "back/kafka/docker-compose.yml"
+          target: "~/stacks/kafka"
 
       - name: Launch / update Kafka stack
         uses: appleboy/ssh-action@v1.0.3
