@@ -23,7 +23,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            mkdir -p $REMOTE_STACK_DIR
+            mkdir -p ${{ env.REMOTE_STACK_DIR }}
 
       - name: Copy docker-compose.yml to EC2
         uses: appleboy/scp-action@v0.1.4
@@ -44,7 +44,7 @@ jobs:
           timeout: "10m"
           script: |
             set -e
-            cd $REMOTE_STACK_DIR
+            cd ${{ env.REMOTE_STACK_DIR }}
 
             docker container prune -f || true
             docker image prune -af || true
