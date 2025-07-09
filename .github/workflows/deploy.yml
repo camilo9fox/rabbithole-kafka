@@ -50,6 +50,6 @@ jobs:
             docker volume prune -f || true
 
             # Pull and recreate using docker-compose (installed on EC2)
-            docker-compose pull
-            docker-compose up -d
-            docker-compose ps
+            docker compose pull
+            docker compose up -d
+            docker compose ps
